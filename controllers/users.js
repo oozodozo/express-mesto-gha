@@ -6,7 +6,7 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(ERR_DEFAULT).send({ message: err }));
+    .catch(() => res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' }));
 };
 
 const getUserById = (req, res) => {
@@ -43,7 +43,7 @@ const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(userId, { name, about })
+  User.findByIdAndUpdate(userId, { name, about }, { new: true })
     .then((user) => {
       if (!user) {
         return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
@@ -62,7 +62,7 @@ const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(userId, { avatar })
+  User.findByIdAndUpdate(userId, { avatar }, { new: true })
     .then((user) => {
       if (!user) {
         return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
