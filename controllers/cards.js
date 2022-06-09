@@ -16,14 +16,16 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { userId } = req.user;
+  const { _id } = req.user;
   const { cardId } = req.params;
 
   Card.findById(cardId)
     .then((card) => {
-      if (card.owner._id === userId) {
+      if (card.owner.toString() === _id) {
         Card.findByIdAndRemove(cardId)
-          .then((cardDeleted) => res.send(cardDeleted));
+          .then(() => {
+            res.status(200).send({ message: 'Карточка удалена' });
+          });
       }
     })
     .catch((err) => res.status(500).send({ message: err }));
@@ -42,9 +44,5 @@ const dislikeCard = (req, res) => {
 };
 
 module.exports = {
-  getCards,
-  createCard,
-  deleteCard,
-  likeCard,
-  dislikeCard,
+  getCards, createCard, deleteCard, likeCard, dislikeCard,
 };
