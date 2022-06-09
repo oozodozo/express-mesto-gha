@@ -6,7 +6,7 @@ const {
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' }));
+    .catch(() => res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' }));
 };
 
 const getUserById = (req, res) => {
@@ -22,7 +22,7 @@ const getUserById = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -32,10 +32,10 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'ValidatorError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -43,7 +43,7 @@ const updateUserInfo = (req, res) => {
   const { name, about } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(userId, { name, about }, { new: true })
+  User.findByIdAndUpdate(userId, { name, about })
     .then((user) => {
       if (!user) {
         return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
@@ -54,7 +54,7 @@ const updateUserInfo = (req, res) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -62,7 +62,7 @@ const updateUserAvatar = (req, res) => {
   const { avatar } = req.body;
   const userId = req.user._id;
 
-  User.findByIdAndUpdate(userId, { avatar }, { new: true })
+  User.findByIdAndUpdate(userId, { avatar })
     .then((user) => {
       if (!user) {
         return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
@@ -73,7 +73,7 @@ const updateUserAvatar = (req, res) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 

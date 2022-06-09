@@ -6,7 +6,7 @@ const {
 const getCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch(() => res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' }));
+    .catch(() => res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' }));
 };
 
 const createCard = (req, res) => {
@@ -16,10 +16,10 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'ValidatorError') {
+     if (err.name === 'ValidationError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+     return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -43,7 +43,7 @@ const deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -59,7 +59,7 @@ const likeCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -75,7 +75,7 @@ const dislikeCard = (req, res) => {
       if (err.name === 'CastError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
