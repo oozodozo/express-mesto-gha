@@ -24,26 +24,14 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  const { _id } = req.user;
   const { cardId } = req.params;
 
-  Card.findById(cardId)
+  Card.findByIdAndRemove(cardId)
     .then((card) => {
-      if (card.owner.toString() === _id) {
-        Card.findByIdAndRemove(cardId)
-          .then((cardData) => {
-            if (!cardData) {
-              return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
-            }
-            return res.send({ message: cardData });
-          });
+      if (!card) {
+        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
       }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-      }
-      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      return res.send({ message: card });
     });
 };
 
