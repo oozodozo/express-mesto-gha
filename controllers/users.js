@@ -1,16 +1,29 @@
 const User = require('../models/user');
+const {
+  ERR_BAD_REQUEST, ERR_NOT_FOUND, ERR_DEFAULT,
+} = require('../utils/constansErrors');
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch((err) => res.status(ERR_DEFAULT).send({ message: err }));
 };
 
 const getUserById = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .then((user) => {
+      if (!user) {
+        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+    });
 };
 
 const createUser = (req, res) => {
@@ -18,7 +31,12 @@ const createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .catch((err) => {
+      if (err.name === 'ValidatorError') {
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+    });
 };
 
 const updateUserInfo = (req, res) => {
@@ -26,8 +44,18 @@ const updateUserInfo = (req, res) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { name, about })
-    .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .then((user) => {
+      if (!user) {
+        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+    });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -35,8 +63,18 @@ const updateUserAvatar = (req, res) => {
   const userId = req.user._id;
 
   User.findByIdAndUpdate(userId, { avatar })
-    .then((avatarInfo) => res.send({ data: avatarInfo }))
-    .catch((err) => res.status(500).send({ message: err }));
+    .then((user) => {
+      if (!user) {
+        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+      }
+      return res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+      }
+      return res.status(ERR_DEFAULT).send({ message: 'Произошла неизвестная ошибка' });
+    });
 };
 
 module.exports = {
