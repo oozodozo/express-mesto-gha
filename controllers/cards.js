@@ -16,10 +16,10 @@ const createCard = (req, res) => {
   Card.create({ name, link, owner })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-     if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
       }
-     return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 

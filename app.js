@@ -21,6 +21,4 @@ app.use('/cards', cardsRoutes);
 
 mongoose.connect('mongodb://localhost:27017/mestodb', { useNewUrlParser: true, family: 4 });
 
-app.listen(PORT, () => {
-  console.log(`App started on ${PORT} port`);
-});
+app.listen(PORT);
