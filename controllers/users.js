@@ -7,7 +7,8 @@ const getUsers = (req, res) => {
 };
 
 const getUserById = (req, res) => {
-  User.findById(req.params._id)
+  const { userId } = req.params;
+  User.findById(userId)
     .then((user) => res.send({ data: user }))
     .catch((err) => res.status(500).send({ message: err }));
 };
@@ -39,9 +40,5 @@ const updateUserAvatar = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
-  getUserById,
-  createUser,
-  updateUserInfo,
-  updateUserAvatar,
+  getUsers, getUserById, createUser, updateUserInfo, updateUserAvatar,
 };

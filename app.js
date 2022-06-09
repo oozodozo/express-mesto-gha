@@ -16,10 +16,10 @@ app.use((req, res, next) => {
   };
   next();
 });
-app.use(usersRoutes);
+app.use('/users', usersRoutes);
 app.use(cardsRoutes);
 
-mongoose.connect('mongodb://localhost:27017/mestodb');
+mongoose.connect('mongodb://localhost:27017/mestodb', { useNewUrlParser: true, family: 4});
 
 app.listen(PORT, () => {
   console.log(`App started on ${PORT} port`);
