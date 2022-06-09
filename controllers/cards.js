@@ -33,7 +33,7 @@ const deleteCard = (req, res) => {
         Card.findByIdAndRemove(cardId)
           .then((cardData) => {
             if (!cardData) {
-              return res.status(ERR_BAD_REQUEST).send({ message: 'Запрашиваемая карточка не найдена' });
+              return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
             }
             return res.send({ message: cardData });
           });
