@@ -1,12 +1,12 @@
 const User = require('../models/user');
 const {
-  ERR_BAD_REQUEST, ERR_NOT_FOUND, ERR_DEFAULT,
-} = require('../utils/constansErrors');
+  ERR_STATUS_BAD_REQUEST, ERR_STATUS_NOT_FOUND, ERR_STATUS_DEFAULT,
+} = require('../utils/constansErrorsStatus');
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch(() => res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' }));
+    .catch(() => res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' }));
 };
 
 const getUserById = (req, res) => {
@@ -14,15 +14,17 @@ const getUserById = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(ERR_STATUS_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        return;
       }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
       }
-      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -30,12 +32,13 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
       }
-      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -46,15 +49,17 @@ const updateUserInfo = (req, res) => {
   User.findByIdAndUpdate(userId, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(ERR_STATUS_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        return;
       }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
       }
-      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -65,15 +70,17 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(userId, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        return res.status(ERR_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        res.status(ERR_STATUS_NOT_FOUND).send({ message: 'Запрашиваемый пользователь не найден' });
+        return;
       }
-      return res.send({ data: user });
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+        return;
       }
-      return res.status(ERR_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
