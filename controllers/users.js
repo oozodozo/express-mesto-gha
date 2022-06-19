@@ -110,6 +110,12 @@ const login = (req, res) => {
     .catch(() => res.status(ERR_STATUS_AUTH).send({ message: 'Ошибка авторизации' }));
 };
 
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => res.send({ user }))
+    .catch((err) => res.send(err));
+}
+
 module.exports = {
-  getUsers, getUserById, createUser, updateUserInfo, updateUserAvatar, login,
+  getUsers, getUserById, createUser, updateUserInfo, updateUserAvatar, login, getCurrentUser,
 };
