@@ -1,8 +1,9 @@
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const {
-  ERR_STATUS_BAD_REQUEST, ERR_STATUS_NOT_FOUND, ERR_STATUS_DEFAULT,
-} = require('../utils/constansErrorsStatus');
+  ERR_STATUS_BAD_REQUEST, ERR_STATUS_NOT_FOUND, ERR_STATUS_DEFAULT, ERR_STATUS_AUTH,
+} = require('../errors/constansErrorsStatus');
 
 const getUsers = (req, res) => {
   User.find({})
@@ -90,6 +91,25 @@ const updateUserAvatar = (req, res) => {
     });
 };
 
+const login = (req, res) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials({ email, password })
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        'super-strong-secret',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      })
+        .send({ token });
+    })
+    .catch(() => res.status(ERR_STATUS_AUTH).send({ message: 'Ошибка авторизации' }));
+};
+
 module.exports = {
-  getUsers, getUserById, createUser, updateUserInfo, updateUserAvatar,
+  getUsers, getUserById, createUser, updateUserInfo, updateUserAvatar, login,
 };

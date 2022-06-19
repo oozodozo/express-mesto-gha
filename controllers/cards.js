@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const {
   ERR_STATUS_BAD_REQUEST, ERR_STATUS_NOT_FOUND, ERR_STATUS_DEFAULT,
-} = require('../utils/constansErrorsStatus');
+} = require('../errors/constansErrorsStatus');
 
 const getCards = (req, res) => {
   Card.find({})
