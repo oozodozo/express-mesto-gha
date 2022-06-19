@@ -26,6 +26,7 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
+  const userId = req.user._id;
 
   Card.findByIdAndRemove(cardId)
     .then((card) => {
@@ -33,7 +34,11 @@ const deleteCard = (req, res) => {
         res.status(ERR_STATUS_NOT_FOUND).send({ message: 'Запрашиваемая карточка не найдена' });
         return;
       }
-      res.send({ message: card });
+      if (card.owner.toString() === userId) {
+        res.send({ message: card });
+      } else {
+        res.status(403).send({ message: 'Недостаточно прав'});
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') {
