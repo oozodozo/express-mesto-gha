@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const {
   ERR_STATUS_BAD_REQUEST, ERR_STATUS_NOT_FOUND, ERR_STATUS_DEFAULT,
@@ -29,17 +30,22 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.status(201).send({ data: user }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
-        return;
-      }
-      res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
-    });
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    })
+      .then((user) => res.status(201).send({ data: user }))
+      .catch((err) => {
+        if (err.name === 'ValidationError') {
+          res.status(ERR_STATUS_BAD_REQUEST).send({ message: 'Переданы некорректные данные' });
+          return;
+        }
+        res.status(ERR_STATUS_DEFAULT).send({ message: 'На сервере произошла ошибка' });
+      }));
 };
 
 const updateUserInfo = (req, res) => {
