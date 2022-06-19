@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
 const { ERR_STATUS_NOT_FOUND } = require('./errors/constansErrorsStatus');
+const { login, createUser } = require('./controllers/users');
 
 const { PORT = 3000 } = process.env;
 const app = express();
@@ -16,6 +17,8 @@ app.use((req, res, next) => {
   };
   next();
 });
+app.post('/signin', login);
+app.post('/signup', createUser);
 app.use('/users', usersRoutes);
 app.use('/cards', cardsRoutes);
 app.use((req, res) => res.status(ERR_STATUS_NOT_FOUND).send({ message: 'Ресурс не найден' }));
