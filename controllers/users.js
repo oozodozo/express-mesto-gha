@@ -117,7 +117,7 @@ const getCurrentUser = (req, res, next) => {
       throw new NotFoundError('Запрашиваемый пользователь не найден');
     })
     .then((user) => {
-      res.send({ user });
+      res.status(200).send({ data: user });
     })
     .catch(next);
 };
