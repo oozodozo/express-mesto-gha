@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const { isEmail } = require('validator');
 const AuthError = require('../errors/AuthError');
+const linkRegex = require('../utils/constants');
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -18,6 +19,12 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
+    validate: {
+      validator(link) {
+        return linkRegex.test(link);
+      },
+      message: 'Добавьте пожалуйста ссылку',
+    },
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
   },
   email: {
@@ -38,6 +45,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// eslint-disable-next-line func-names
 userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
