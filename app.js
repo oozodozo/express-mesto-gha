@@ -24,6 +24,8 @@ app.use('*', () => {
   throw new NotFound('Запрашиваемая страница не найдена');
 });
 
+mongoose.connect('mongodb://localhost:27017/mestodb', { useNewUrlParser: true, family: 4 });
+
 app.use(errors());
 
 app.use((err, req, res, next) => {
@@ -37,7 +39,5 @@ app.use((err, req, res, next) => {
     });
   next();
 });
-
-mongoose.connect('mongodb://localhost:27017/mestodb', { useNewUrlParser: true, family: 4 });
 
 app.listen(PORT);

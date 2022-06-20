@@ -38,7 +38,11 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(201).send({ data: user }))
+    .then((user) => res.status(201).send({
+      data: {
+        name: user.name, about: user.about, avatar: user.avatar, email: user.email,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные');
@@ -95,7 +99,7 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'super-strong-secret',
+        'secret-key',
         { expiresIn: '7d' },
       );
       res.cookie('jwt', token, {
@@ -111,7 +115,8 @@ const login = (req, res, next) => {
 };
 
 const getCurrentUser = (req, res, next) => {
-  User.findById(req.user._id)
+  const userId = req.user._id;
+  User.findById(userId)
     .orFail()
     .catch(() => {
       throw new NotFoundError('Запрашиваемый пользователь не найден');
