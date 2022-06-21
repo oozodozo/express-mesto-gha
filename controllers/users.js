@@ -44,9 +44,8 @@ const createUser = (req, res, next) => {
       }
       if (err.code === 11000) {
         throw new ConflictError('Вы уже зарегистрированы, выполните вход');
-      }
-    })
-    .catch(next);
+      } else { next(err); }
+    });
 };
 
 const updateUserInfo = (req, res, next) => {
@@ -63,9 +62,8 @@ const updateUserInfo = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные');
-      }
-    })
-    .catch(next);
+      } else { next(err); }
+    });
 };
 
 const updateUserAvatar = (req, res, next) => {
@@ -82,9 +80,8 @@ const updateUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         throw new BadRequestError('Переданы некорректные данные');
-      }
-    })
-    .catch(next);
+      } else { next(err); }
+    });
 };
 
 const login = (req, res, next) => {
@@ -111,10 +108,7 @@ const login = (req, res, next) => {
 
 const getCurrentUser = (req, res, next) => {
   User.findById(req.user._id)
-    .orFail()
-    .catch(() => {
-      throw new NotFoundError('Запрашиваемый пользователь не найден');
-    })
+    .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((user) => {
       res.status(200).send({ data: user });
     })
