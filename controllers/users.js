@@ -40,10 +40,10 @@ const createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
       }
       if (err.code === 11000) {
-        throw new ConflictError('Вы уже зарегистрированы, выполните вход');
+        next(new ConflictError('Вы уже зарегистрированы, выполните вход'));
       } else { next(err); }
     });
 };
@@ -61,7 +61,7 @@ const updateUserInfo = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
       } else { next(err); }
     });
 };
@@ -79,7 +79,7 @@ const updateUserAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        throw new BadRequestError('Переданы некорректные данные');
+        next(new BadRequestError('Переданы некорректные данные'));
       } else { next(err); }
     });
 };
@@ -101,9 +101,8 @@ const login = (req, res, next) => {
         .send({ token });
     })
     .catch(() => {
-      throw new AuthError('Ошибка авторизации');
-    })
-    .catch(next);
+      next(new AuthError('Ошибка авторизации'));
+    });
 };
 
 const getCurrentUser = (req, res, next) => {
