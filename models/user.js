@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-const { isEmail, validator } = require('validator');
+const { isEmail, isURL } = require('validator');
 const AuthError = require('../errors/AuthError');
 
 const userSchema = new mongoose.Schema({
@@ -20,8 +20,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (link) => validator.isURL(link),
-      message: 'Неправильный формат ссылки',
+      validator(link) {
+        return isURL(link);
+      },
     },
   },
   email: {
